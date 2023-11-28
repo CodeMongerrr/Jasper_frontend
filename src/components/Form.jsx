@@ -10,7 +10,7 @@ function TypewriterEffect({ text }) {
 				setDisplayText((prevText) => prevText + text.charAt(index));
 				setIndex((prevIndex) => prevIndex + 1);
 			}
-		}, 5); 
+		}, 5);
 
 		return () => {
 			clearInterval(timer);
@@ -19,9 +19,9 @@ function TypewriterEffect({ text }) {
 
 	return <div>{displayText}</div>;
 }
-function MarketingAngleForm() {
+const MarketingAngleForm = () => {
 	const [responseText, setResponseText] = useState('');
-
+	const [loading, setloading] = useState(false)
 	const [formData, setFormData] = useState({
 		productName: 'Eco-Friendly Water Bottle',
 		productDescription:
@@ -49,8 +49,9 @@ function MarketingAngleForm() {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		setloading(true);
 		try {
-			const response = await fetch('http://localhost:7000/chat', {
+			const response = await fetch('https://sk8j9bpvmh84p0lo6brcg0cdag.ingress.spheron.wiki/chat', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
@@ -59,7 +60,9 @@ function MarketingAngleForm() {
 			});
 			const data = await response.json();
 			console.log(data.response.content); // Process the response data as needed
+			setloading(false);
 			setResponseText(data.response.content)
+
 		} catch (error) {
 			console.error('Error during API request:', error);
 		}
@@ -94,7 +97,11 @@ function MarketingAngleForm() {
 				</form>
 			</div>
 			<div className="flex justify-center items-center h-screen bg-gray-100">
-				{responseText && <TypewriterEffect text={responseText} />}
+				{loading ? (
+					<div>Loading...</div> // Loading message
+				) : (
+					responseText && <TypewriterEffect text={responseText} />
+				)}
 			</div>
 		</div>
 	);
